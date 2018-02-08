@@ -9,17 +9,48 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        let group = DispatchGroup()
+        print(Date())
+        group.enter()
+        self.load (timeInterval: 2){ (name) in
+            print("0=="+Date().description)
+
+            print(name ?? "0")
+            group.leave()
+        }
+        
+        group.enter()
+        self.load(timeInterval: 3) { (name) in
+            print("1=="+Date().description)
+            
+            print(name ?? "0")
+            group.leave()
+        }
+        
+        group.enter()
+        self.load(timeInterval: 10) { (name) in
+            print("2==" + Date().description)
+            
+            print(name ?? "0")
+            group.leave()
+        }
+        
+        group.notify(queue: .main){
+            print(Date())
+        }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    func load(timeInterval: TimeInterval, completion: @escaping (String?) -> Void) {
+        DispatchQueue.global().async {
+            Thread.sleep(forTimeInterval: timeInterval)
+            completion(Thread.current.debugDescription)
+        }
     }
-
-
+    
 }
+
+
 
